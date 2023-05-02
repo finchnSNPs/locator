@@ -219,18 +219,18 @@ def split_train_test(ac,locs):
     predgen=np.transpose(ac[:,pred])
     return train,test,traingen,testgen,trainlocs,testlocs,pred,predgen
 
+# efforts to improve network - 20230501
 def load_network(traingen,dropout_prop):
     from tensorflow.keras import backend as K
     def euclidean_distance_loss(y_true, y_pred):
         return K.sqrt(K.sum(K.square(y_pred - y_true),axis=-1))
     model = tf.keras.Sequential()
     model.add(tf.keras.layers.BatchNormalization(input_shape=(traingen.shape[1],)))
-    for i in range(int(np.floor(args.nlayers/2))):
+    for i in range(int(np.floor(args.nlayers))):
         model.add(tf.keras.layers.Dense(args.width,activation="elu"))
-    model.add(tf.keras.layers.Dropout(args.dropout_prop))
-    for i in range(int(np.ceil(args.nlayers/2))):
-        model.add(tf.keras.layers.Dense(args.width,activation="elu"))
-    model.add(tf.keras.layers.Dense(2))
+        model.add(tf.keras.layers.Dropout(args.dropout_prop))
+    model.add(tf.keras.layers.Dense(32))
+    model.add(tf.keras.layers.Dropout(args.dropout_prop/2))
     model.add(tf.keras.layers.Dense(2))
     model.compile(optimizer="Adam",
                   loss=euclidean_distance_loss)

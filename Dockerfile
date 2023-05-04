@@ -1,7 +1,12 @@
 #locator dockerfile
 
+#arm64
 #FROM python:3.8-slim-bullseye
-FROM python:3.8-slim-buster
+#amd64
+#FROM python:3.8-slim-buster
+
+#required for cross platform build - linux/amd64 and linux/arm64
+FROM --platform=$BUILDPLATFORM python:3.8-slim-buster AS build
 
 RUN su -
 RUN apt update
